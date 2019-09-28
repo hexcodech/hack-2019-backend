@@ -62,4 +62,3 @@ typings/
 # next.js build output
 .next
 config/app-config.json
-config\app-config.json
