@@ -41,10 +41,6 @@ module.exports = gql`
     user(id: ID!): User
     me: User!
   }
-  type CreateMeetupReturnType {
-    meetup: Meetup!
-    events: [Event!]!
-  }
   type Mutation {
     createMeetup(
       title: String
@@ -53,9 +49,9 @@ module.exports = gql`
       travelTime: Int!
       meansOfTransport: String!
       datetime: Int!
-      username: String
-      location: String
-    ): CreateMeetupReturnType!
+      username: String!
+      location: String!
+    ): Meetup!
     updateMeetup(id: Int!, title: String!, description: String): Meetup!
     deleteMeetup(id: Int!): Int!
   }

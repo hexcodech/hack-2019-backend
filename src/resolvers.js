@@ -153,12 +153,8 @@ module.exports = {
                           )
                         )
                       )
-                      .then(events => ({
-                        meetup,
-                        events
-                      }))
                   );
-                })
+                }).then(() => meetup)
             );
         }),
     updateMeetup: (parent, { id, title, description }, { db, user }, info) =>
