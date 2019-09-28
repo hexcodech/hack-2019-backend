@@ -12,7 +12,7 @@ module.exports = gql`
   }
   type Meetup {
     id: ID!
-    title: String!
+    title: String
     token: String!
     description: String
     maxTravelTime: Int
