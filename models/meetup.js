@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       token: {
         type: DataTypes.STRING(128),
-        defaultValue: () => generateRandomAlphanumString(64) //in hex 1 bytes equal 2 chars, i.e. for 16 chars we need 12 bytes
+        defaultValue: () => generateRandomAlphanumString(10) //in hex 1 bytes equal 2 chars, i.e. for 16 chars we need 12 bytes
       },
       title: {
         type: DataTypes.STRING(255),
