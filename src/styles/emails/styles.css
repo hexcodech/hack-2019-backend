@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 100% !important;
+
+  font-family: Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+}
+
+.content {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 5px;
+}
+
+.margin-row {
+  height: 16px;
+}
+
+.header {
+  font-weight: bold;
+  font-size: 48px;
+}
+
+.button {
+  display: inline-block;
+  padding: 8px 4px;
+  background-color: #000;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}

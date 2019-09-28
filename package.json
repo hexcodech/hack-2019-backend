@@ -1,0 +1,32 @@
+{
+  "name": "hack-2019-backend",
+  "version": "1.0.0",
+  "description": "The server software for the our hackathon project",
+  "main": "src/index.js",
+  "repository": "https://github.com/hexcodech/hack-2019-backend",
+  "author": "Tyratox (Nico Hauser)",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./src/index.js"
+  },
+  "dependencies": {
+    "@playlyfe/gql": "^2.6.1",
+    "apollo-server-express": "^2.6.7",
+    "circle-enclose": "^1.0.0",
+    "ejs": "^2.6.2",
+    "email-templates": "^6.0.0",
+    "eslint": "^6.0.1",
+    "express": "^4.17.1",
+    "graphql": "^14.4.1",
+    "graphql-tools": "^4.0.5",
+    "mysql2": "^1.6.5",
+    "node-fetch": "^2.6.0",
+    "nodemailer": "^6.2.1",
+    "passport": "^0.4.0",
+    "passport-http-bearer": "^1.0.1",
+    "point-in-polygon": "^1.0.1",
+    "sequelize": "^5.9.0",
+    "sequelize-cli": "^5.5.0",
+    "uuid": "^3.3.3"
+  }
+}
