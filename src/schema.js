@@ -47,7 +47,7 @@ module.exports = gql`
     createMeetup(
       title: String!
       description: String
-      categoryId: [ID!]!
+      categoryIds: [ID!]!
       travelTime: Int!
       meansOfTransport: String!
       datetime: Int!

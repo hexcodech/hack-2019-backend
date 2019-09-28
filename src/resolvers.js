@@ -66,86 +66,59 @@ module.exports = {
       },
       { db, user },
       info
-    ) => {
-      return Promise.resolve()
-        .then(() => {
-          if (user) {
-            //we're signed in and ready to go!
-            return user;
-          } else {
-            //create a temporary user
-            console.log("== return db.user.create ==")
-
-            return db.user.create({ name: username, real: false });
-          }
-        })
-        .then(user => {
-          db.meetup
-            .create({ title, description, maxTravelTime: travelTime, datetime })
-            .then(meetup =>
-              console.log("###") ||
-              meetup.setEventCategories(categoryIds).then(() =>
-                db.meetupUsers
-                  .create({
-                    longitude,
-                    latitude,
-                    meansOfTransport,
-                    userId: user.id,
-                    meetupId: meetup.id
+    ) => Promise.resolve()
+      .then(() => {
+        if (user) {
+          //we're signed in and ready to go!
+          return user;
+        }
+        else {
+          //create a temporary user
+          console.log("== return db.user.create ==");
+          return db.user.create({ name: username, real: false });
+        }
+      })
+      .then(user => {
+        return db.meetup
+          .create({ title, description, maxTravelTime: travelTime, datetime })
+          .then(meetup => console.log("###" + categoryIds) ||
+            meetup.setEventCategories(categoryIds).then(() => db.meetupUsers
+              .create({
+                longitude,
+                latitude,
+                meansOfTransport,
+                userId: user.id,
+                meetupId: meetup.id
+              })
+              .then(() => queryEvents({ meetup }))
+              .then(events => Promise.all(events.map(({ title, lng, lat, start, end, price, priceLevel, rating, types }) => db.event
+                .create({
+                  title,
+                  latitude: lat,
+                  longitude: lng,
+                  description: "",
+                  start,
+                  end,
+                  price,
+                  priceLevel,
+                  rating,
+                  meetupId: meetup.id
+                })
+                .then(event => db.eventCategory
+                  .findAll({
+                    where: {
+                      key: {
+                        [Op.or]: [types]
+                      }
+                    }
                   })
-                  .then(() => queryEvents({ meetup }))
-                  .then(events =>
-                    Promise.all(
-                      events.map(
-                        ({
-                          title,
-                          lng,
-                          lat,
-                          start,
-                          end,
-                          price,
-                          priceLevel,
-                          rating,
-                          types
-                        }) =>
-                          db.event
-                            .create({
-                              title,
-                              latitude: lat,
-                              longitude: lng,
-                              description: "",
-                              start,
-                              end,
-                              price,
-                              priceLevel,
-                              rating,
-                              meetupId: meetup.id
-                            })
-                            .then(event =>
-                              db.eventCategory
-                                .findAll({
-                                  where: {
-                                    key: {
-                                      [Op.or]: [types]
-                                    }
-                                  }
-                                })
-                                .then(categories =>
-                                  event.setCategories(categories)
-                                )
-                                .then(() => event)
-                            )
-                      )
-                    )
-                  )
-                  .then(events => ({
-                    meetup,
-                    events
-                  }))
-              )
-            );
-        });
-    },
+                  .then(categories => event.setEventCategories(categories))
+                  .then(() => event)))))
+              .then(events => ({
+                meetup,
+                events
+              }))));
+      }),
     updateMeetup: (parent, { id, title, description }, { db, user }, info) =>
       db.meetup.findOne({ where: { id } }).then(meetup => {
         if (!meetup) {

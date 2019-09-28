@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
       meansOfTransport: {
-        type: DataTypes.STRING(5),
+        type: DataTypes.STRING(255),
         default: "public_transport",
         validate: {
           isIn: [
@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  MeetupUsers.afterAssociation = db => {};
+  MeetupUsers.afterAssociation = db => { };
 
   return MeetupUsers;
 };
