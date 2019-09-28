@@ -33,6 +33,8 @@ module.exports = gql`
     startDateTime: Int!
     endDateTime: Int!
     price: Int
+    rating: Int
+    priceLevel: Int
   }
   type Query {
     meetup(id: ID!): Meetup
@@ -52,8 +54,8 @@ module.exports = gql`
       meansOfTransport: String!
       datetime: Int!
       username: String
-      longitude: Int
-      latitude: Int
+      longitude: Float
+      latitude: Float
     ): CreateMeetupReturnType!
     updateMeetup(id: Int!, title: String!, description: String): Meetup!
     deleteMeetup(id: Int!): Int!

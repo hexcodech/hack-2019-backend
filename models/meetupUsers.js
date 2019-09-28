@@ -8,11 +8,11 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true
       },
       longitude: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         allowNull: false
       },
       latitude: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         allowNull: false
       },
       meansOfTransport: {
@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  MeetupUsers.afterAssociation = db => { };
+  MeetupUsers.afterAssociation = db => {};
 
   return MeetupUsers;
 };
