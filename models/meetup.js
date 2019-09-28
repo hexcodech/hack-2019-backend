@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       title: {
         type: DataTypes.STRING(255),
-        allowNull: false
+        allowNull: true
       },
       description: {
         type: DataTypes.TEXT("long")
@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Meetup.afterAssociation = db => { };
+  Meetup.afterAssociation = db => {};
 
   return Meetup;
 };

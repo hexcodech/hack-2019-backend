@@ -1,6 +1,13 @@
 const { Op } = require("sequelize");
+const fetch = require("node-fetch");
+
 const { NotFoundError, MissingPermissionError } = require("./errors");
 const { queryEvents } = require("./api");
+const {
+  TRAVEL_TIME_APP_ID,
+  TRAVEL_TIME_API_KEY,
+  GOOGLE_MAPS_API_KEY
+} = require("../config/app-config.json");
 
 module.exports = {
   User: {
@@ -61,8 +68,7 @@ module.exports = {
         meansOfTransport,
         datetime,
         username,
-        longitude,
-        latitude
+        location
       },
       { db, user },
       info
@@ -81,65 +87,78 @@ module.exports = {
           return db.meetup
             .create({ title, description, maxTravelTime: travelTime, datetime })
             .then(meetup =>
-              meetup.setEventCategories(categoryIds).then(() =>
-                db.meetupUsers
-                  .create({
-                    longitude,
-                    latitude,
-                    meansOfTransport,
-                    userId: user.id,
-                    meetupId: meetup.id
-                  })
-                  .then(() => queryEvents({ meetup }))
-                  .then(events =>
-                    Promise.all(
-                      events.map(
-                        ({
-                          title,
-                          lng,
-                          lat,
-                          start,
-                          end,
-                          price,
-                          priceLevel,
-                          rating,
-                          types
-                        }) =>
-                          db.event
-                            .create({
+              fetch(
+                `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+                  location
+                )}&key=${GOOGLE_MAPS_API_KEY}`
+              )
+                .then(response => response.json())
+                .then(json => {
+                  const {
+                    lat: latitude,
+                    lng: longitude
+                  } = json.results[0].geometry.location;
+
+                  return meetup.setEventCategories(categoryIds).then(() =>
+                    db.meetupUsers
+                      .create({
+                        longitude,
+                        latitude,
+                        meansOfTransport,
+                        userId: user.id,
+                        meetupId: meetup.id
+                      })
+                      .then(() => queryEvents({ meetup }))
+                      .then(events =>
+                        Promise.all(
+                          events.map(
+                            ({
                               title,
-                              latitude: lat,
-                              longitude: lng,
-                              description: "",
+                              lng,
+                              lat,
                               start,
                               end,
                               price,
                               priceLevel,
                               rating,
-                              meetupId: meetup.id
-                            })
-                            .then(event =>
-                              db.eventCategory
-                                .findAll({
-                                  where: {
-                                    key: {
-                                      [Op.or]: [types]
-                                    }
-                                  }
+                              types
+                            }) =>
+                              db.event
+                                .create({
+                                  title,
+                                  latitude: lat,
+                                  longitude: lng,
+                                  description: "",
+                                  start,
+                                  end,
+                                  price,
+                                  priceLevel,
+                                  rating,
+                                  meetupId: meetup.id
                                 })
-                                .then(categories =>
-                                  event.setEventCategories(categories)
+                                .then(event =>
+                                  db.eventCategory
+                                    .findAll({
+                                      where: {
+                                        key: {
+                                          [Op.or]: [types]
+                                        }
+                                      }
+                                    })
+                                    .then(categories =>
+                                      event.setEventCategories(categories)
+                                    )
+                                    .then(() => event)
                                 )
-                                .then(() => event)
-                            )
+                          )
+                        )
                       )
-                    )
-                  )
-                  .then(events => ({
-                    meetup,
-                    events
-                  }))
-              )
+                      .then(events => ({
+                        meetup,
+                        events
+                      }))
+                  );
+                })
             );
         }),
     updateMeetup: (parent, { id, title, description }, { db, user }, info) =>

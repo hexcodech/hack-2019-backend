@@ -12,7 +12,6 @@
   "dependencies": {
     "@playlyfe/gql": "^2.6.1",
     "apollo-server-express": "^2.6.7",
-    "circle-enclose": "^1.0.0",
     "ejs": "^2.6.2",
     "email-templates": "^6.0.0",
     "eslint": "^6.0.1",

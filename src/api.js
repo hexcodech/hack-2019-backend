@@ -1,6 +1,5 @@
 const uuidv5 = require("uuid/v5");
 const fetch = require("node-fetch");
-const enclose = require("circle-enclose");
 const inside = require("point-in-polygon");
 const jsAlgorithms = require("js-algorithms");
 
@@ -9,7 +8,6 @@ const {
   TRAVEL_TIME_API_KEY,
   GOOGLE_MAPS_API_KEY
 } = require("../config/app-config.json");
-const { makeCircle } = require("./smallest-enclosing-circle");
 const db = require("../models");
 
 const smallestEnclosingCircle = shell => {
@@ -94,17 +92,13 @@ module.exports.queryEvents = ({ meetup }) => {
 
               //fetch events in this area for each category
               return Promise.all(
-                categories.map(
-                  category =>
-                    console.log(
-                      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&type=${category.key}&key=${GOOGLE_MAPS_API_KEY}`
-                    ) ||
-                    fetch(
-                      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&type=${category.key}&key=${GOOGLE_MAPS_API_KEY}`,
-                      {
-                        headers: { "Content-Type": "application/json" }
-                      }
-                    ).then(response => response.json())
+                categories.map(category =>
+                  fetch(
+                    `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&type=${category.key}&key=${GOOGLE_MAPS_API_KEY}`,
+                    {
+                      headers: { "Content-Type": "application/json" }
+                    }
+                  ).then(response => response.json())
                 )
               )
                 .then(jsons =>

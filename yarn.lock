@@ -894,11 +894,6 @@ cheerio@^0.22.0:
     lodash.reject "^4.4.0"
     lodash.some "^4.4.0"
 
-circle-enclose@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/circle-enclose/-/circle-enclose-1.0.0.tgz#d7f208562c3a8d46faee705fc7f0a9a7eed1558e"
-  integrity sha1-1/IIViw6jUb67nBfx/Cpp+7RVY4=
-
 clean-css@^4.1.11:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-4.2.1.tgz#2d411ef76b8569b6d0c84068dabe85b0aa5e5c17"

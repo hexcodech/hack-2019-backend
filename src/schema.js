@@ -47,15 +47,14 @@ module.exports = gql`
   }
   type Mutation {
     createMeetup(
-      title: String!
+      title: String
       description: String
       categoryIds: [ID!]!
       travelTime: Int!
       meansOfTransport: String!
       datetime: Int!
       username: String
-      longitude: Float
-      latitude: Float
+      location: String
     ): CreateMeetupReturnType!
     updateMeetup(id: Int!, title: String!, description: String): Meetup!
     deleteMeetup(id: Int!): Int!
