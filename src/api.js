@@ -147,7 +147,8 @@ module.exports.queryEvents = ({ meetup }) => {
                     price: null,
                     priceLevel: event.price_level,
                     rating: event.rating,
-                    types: event.types
+                    types: event.types,
+                    placeId: event.place_id
                   }))
                 );
             })

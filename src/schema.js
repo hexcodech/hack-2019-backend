@@ -1,6 +1,11 @@
 const { gql } = require("apollo-server-express");
 
 module.exports = gql`
+  type MeetupRelation {
+    longitude: Float!
+    latitude: Float!
+    meansOfTransport: String!
+  }
   type User {
     id: ID!
     name: String!
@@ -9,6 +14,7 @@ module.exports = gql`
     meetups: [Meetup!]!
     updatedAt: Int
     createdAt: Int
+    meetupRelation(meetupId: ID!): MeetupRelation
   }
   type Meetup {
     id: ID!
@@ -32,6 +38,9 @@ module.exports = gql`
     travelTime: Int!
     startDateTime: Int!
     endDateTime: Int!
+    latitude: Float!
+    longitude: Float!
+    placeId: String!
     price: Int
     rating: Int
     priceLevel: Int
@@ -51,6 +60,12 @@ module.exports = gql`
       datetime: Int!
       username: String!
       location: String!
+    ): Meetup!
+    joinMeetup(
+      meansOfTransport: String!
+      username: String!
+      location: String!
+      meetupId: ID!
     ): Meetup!
     updateMeetup(id: Int!, title: String!, description: String): Meetup!
     deleteMeetup(id: Int!): Int!

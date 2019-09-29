@@ -12,7 +12,12 @@ const {
 module.exports = {
   User: {
     meetups: (parent, args, context, info) =>
-      parent.getMeetups({ order: [["createdAt", "DESC"]] })
+      parent.getMeetups({ order: [["createdAt", "DESC"]] }),
+    meetupRelation: (parent, { meetupId }, { db }, info) =>
+      db.meetupUsers.findOne({
+        where: { meetupId, userId: parent.id },
+        order: [["createdAt", "DESC"]]
+      })
   },
   Meetup: {
     owner: (parent, args, context, info) => parent.getUser(),
@@ -121,6 +126,7 @@ module.exports = {
                               price,
                               priceLevel,
                               rating,
+                              placeId,
                               types
                             }) =>
                               db.event
@@ -134,6 +140,7 @@ module.exports = {
                                   price,
                                   priceLevel,
                                   rating,
+                                  placeId,
                                   meetupId: meetup.id
                                 })
                                 .then(event =>
@@ -154,8 +161,101 @@ module.exports = {
                         )
                       )
                   );
-                }).then(() => meetup)
+                })
+                .then(() => meetup)
             );
+        }),
+    joinMeetup: (
+      parent,
+      { meansOfTransport, username, location, meetupId },
+      { db, user },
+      info
+    ) =>
+      Promise.resolve()
+        .then(() => {
+          if (user) {
+            //we're signed in and ready to go!
+            return user;
+          } else {
+            //create a temporary user
+            return db.user.create({ name: username, real: false });
+          }
+        })
+        .then(user => {
+          return db.meetup.findOne({ where: { id: meetupId } }).then(meetup =>
+            fetch(
+              `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+                location
+              )}&key=${GOOGLE_MAPS_API_KEY}`
+            )
+              .then(response => response.json())
+              .then(json => {
+                const {
+                  lat: latitude,
+                  lng: longitude
+                } = json.results[0].geometry.location;
+
+                return db.meetupUsers
+                  .create({
+                    longitude,
+                    latitude,
+                    meansOfTransport,
+                    userId: user.id,
+                    meetupId: meetup.id
+                  })
+                  .then(() =>
+                    db.event.destroy({ where: { meetupId: meetup.id } })
+                  )
+                  .then(() => queryEvents({ meetup }))
+                  .then(events =>
+                    Promise.all(
+                      events.map(
+                        ({
+                          title,
+                          lng,
+                          lat,
+                          start,
+                          end,
+                          price,
+                          priceLevel,
+                          rating,
+                          placeId,
+                          types
+                        }) =>
+                          db.event
+                            .create({
+                              title,
+                              latitude: lat,
+                              longitude: lng,
+                              description: "",
+                              start,
+                              end,
+                              price,
+                              priceLevel,
+                              rating,
+                              placeId,
+                              meetupId: meetup.id
+                            })
+                            .then(event =>
+                              db.eventCategory
+                                .findAll({
+                                  where: {
+                                    key: {
+                                      [Op.or]: [types]
+                                    }
+                                  }
+                                })
+                                .then(categories =>
+                                  event.setEventCategories(categories)
+                                )
+                                .then(() => event)
+                            )
+                      )
+                    )
+                  );
+              })
+              .then(() => meetup)
+          );
         }),
     updateMeetup: (parent, { id, title, description }, { db, user }, info) =>
       db.meetup.findOne({ where: { id } }).then(meetup => {
