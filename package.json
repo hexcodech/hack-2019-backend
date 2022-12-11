@@ -15,7 +15,7 @@
     "ejs": "^2.6.2",
     "email-templates": "^6.0.0",
     "eslint": "^6.0.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "graphql": "^14.4.1",
     "graphql-tools": "^4.0.5",
     "js-algorithms": "^1.5.0",
